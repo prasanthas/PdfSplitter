@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 public class PdfSplitter {
 
     public void splitPdf() throws IOException {
-        File file = new File("payslip.pdf");
+//        File file = new File("payslip.pdf");
+        File file = new File("PayslipSample.pdf");
         System.out.println("path: "+file.getAbsolutePath());
 
         PDDocument document = PDDocument.load(file);
@@ -77,7 +78,8 @@ public class PdfSplitter {
     }
 
     private Map<String, List<PDDocument>> collectToMap(List<PDDocument> pages) throws IOException {
-        Pattern p = Pattern.compile("(Staff\\s+No\\s+:\\s+)(\\d+)");
+//        Pattern p = Pattern.compile("(Staff\\s+No\\s+:\\s+)(\\d+)");
+        Pattern p = Pattern.compile("(Staff:\\s+)(\\d+)");
         PDFTextStripper pdfStripper = new PDFTextStripper();
         Map<String, List<PDDocument>> documentsMap = new HashMap<String, List<PDDocument>>();
         for (PDDocument pd: pages) {

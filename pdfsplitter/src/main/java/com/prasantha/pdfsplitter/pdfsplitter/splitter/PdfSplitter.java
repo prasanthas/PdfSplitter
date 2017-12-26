@@ -30,7 +30,7 @@ public class PdfSplitter {
 
         Map<String, List<PDDocument>> documentsMap = collectToMap(pages);
 
-        printDocumentsMap(documentsMap);
+        splitPdfs(documentsMap);
 
         System.out.println("Multiple PDF’s created");
 
@@ -38,10 +38,15 @@ public class PdfSplitter {
 
     }
 
-    private void printDocumentsMap(Map<String, List<PDDocument>> documentsMap) {
+    private void splitPdfs(Map<String, List<PDDocument>> documentsMap) {
         System.out.println("**********START PRINTING DOCUMENT MAP ******************");
 
         System.out.println("documents size: " + documentsMap.size());
+
+        File out = new File("output");
+        if (!out.exists()) {
+            out.mkdir();
+        }
 
         documentsMap.forEach((k,v)->{
             System.out.println("K: "+k);

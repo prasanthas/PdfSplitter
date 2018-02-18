@@ -1,4 +1,6 @@
 target/
+output/
+payslip.pdf
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###

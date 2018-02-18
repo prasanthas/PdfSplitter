@@ -1,5 +1,7 @@
 package com.prasantha.pdfsplitter.pdfsplitter.splitter;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -8,59 +10,62 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PdfSplitter {
 
-    public void splitPdf() throws IOException {
-        File file = new File("payslip.pdf");
+    private static final Logger logger = LogManager.getLogger(PdfSplitter.class);
+
+    public void splitPdf(String fileName) throws IOException {
+//        File file = new File("payslip.pdf");
+        File file = new File(fileName);
 //        File file = new File("PayslipSample.pdf");
-        System.out.println("path: "+file.getAbsolutePath());
+        logger.debug("path: "+file.getAbsolutePath());
 
         PDDocument document = PDDocument.load(file);
         Splitter splitter = new Splitter();
         List<PDDocument> pages = splitter.split(document);
 
-        System.out.println("pages size: "+pages.size());
+        logger.debug("pages size: "+pages.size());
 
         Map<String, List<PDDocument>> documentsMap = collectToMap(pages);
 
         splitPdfs(documentsMap);
 
-        System.out.println("Multiple PDF’s created");
+        logger.debug("Multiple PDF’s created");
 
         document.close();
 
     }
 
     private void splitPdfs(Map<String, List<PDDocument>> documentsMap) {
-        System.out.println("**********START PRINTING DOCUMENT MAP ******************");
 
-        System.out.println("documents size: " + documentsMap.size());
+        logger.debug("documents size: " + documentsMap.size());
 
         File out = new File("output");
         if (!out.exists()) {
             out.mkdir();
         }
+        
+
+        String date = getDate();
 
         documentsMap.forEach((k,v)->{
-            System.out.println("K: "+k);
-            System.out.println("V: "+v.size());
+            logger.debug("K: "+k);
+            logger.debug("V: "+v.size());
 
             if (v.size() == 1) {
                 try {
-                    v.get(0).save("output/payslip_"+k+".pdf");
+                    v.get(0).save("output/"+date+"-"+k+".pdf");
                 } catch (IOException e) {
                    e.printStackTrace();
 
                 }
             } else {
-                System.out.println("STREAM THROUGH AND CONCAT");
+                logger.debug("STREAM THROUGH AND CONCAT");
                 PDFMergerUtility merger = new PDFMergerUtility();
                 PDDocument destination = new PDDocument(MemoryUsageSetting.setupMainMemoryOnly());
                 v.forEach((pd) -> {
@@ -73,13 +78,18 @@ public class PdfSplitter {
                 });
 
                 try {
-                    destination.save("output/payslip_"+k+".pdf");
+                    destination.save("output/"+date+"-"+k+".pdf");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
-        System.out.println("**********END PRINTING DOCUMENT MAP ******************");
+    }
+
+    private String getDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String date = sdf.format(new Date());
+        return date;
     }
 
     private Map<String, List<PDDocument>> collectToMap(List<PDDocument> pages) throws IOException {

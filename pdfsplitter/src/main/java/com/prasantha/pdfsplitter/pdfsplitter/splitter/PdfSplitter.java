@@ -7,6 +7,9 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +22,10 @@ public class PdfSplitter {
 
     private static final Logger logger = LogManager.getLogger(PdfSplitter.class);
 
-    public void splitPdf(String fileName) throws IOException {
+    public void splitPdf(String fileName, Splitter p) throws IOException {
+
+        System.out.println("PPPP: "+p);
+
 //        File file = new File("payslip.pdf");
         File file = new File(fileName);
 //        File file = new File("PayslipSample.pdf");
